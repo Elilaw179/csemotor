@@ -6,8 +6,7 @@ const invController = {};
 
 invController.buildByClassification = async (req, res, next) => {
   const classification = req.params.classificationName || "All";
-  // In a full solution you would fetch vehicles by classification here.
-  // For now Irender a simple page (you can expand with DB queries).
+  
   res.render("inventory/classification", {
     title: `${classification} Vehicles`,
     classification,
@@ -15,10 +14,7 @@ invController.buildByClassification = async (req, res, next) => {
   });
 };
 
-/**
- * Build the detail view for a single vehicle.
- * Path: /inventory/detail/:inv_id
- */
+
 invController.buildDetailView = async (req, res, next) => {
   const inv_id = parseInt(req.params.inv_id, 10);
 
@@ -49,9 +45,7 @@ invController.buildDetailView = async (req, res, next) => {
   }
 };
 
-/**
- * Trigger an intentional server error (Task 3)
- */
+
 invController.triggerError = (req, res, next) => {
   // throw synchronous error to be caught by error middleware
   throw new Error("Intentional 500 error triggered for testing");

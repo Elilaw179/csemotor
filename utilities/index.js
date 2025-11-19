@@ -1,9 +1,6 @@
 const utilities = {};
 
-/**
- * Build nav HTML (simple example returning an HTML string)
- * You can extend this to dynamically build classification links from DB.
- */
+
 utilities.getNav = async function () {
   // returning minimal nav to inject in views if desired
   return `
@@ -18,10 +15,7 @@ utilities.getNav = async function () {
     </nav>`;
 };
 
-/**
- * Build the vehicle detail HTML fragment (returns string)
- * Uses proper currency and thousand separators.
- */
+
 utilities.buildVehicleDetailHTML = function (vehicle) {
   const price = Number(vehicle.inv_price).toLocaleString("en-US", {
     style: "currency",
