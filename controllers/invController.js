@@ -7,7 +7,7 @@ const invController = {};
 invController.buildByClassification = async (req, res, next) => {
   const classification = req.params.classificationName || "All";
   // In a full solution you would fetch vehicles by classification here.
-  // For now I render a simple page (you can expand with DB queries).
+  // For now Irender a simple page (you can expand with DB queries).
   res.render("inventory/classification", {
     title: `${classification} Vehicles`,
     classification,
