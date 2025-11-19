@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../partials/head'); %>
+  <body>
+    <div id="wrapper">
+      <%- include('../partials/header'); %>
+      <%- include('../partials/nav'); %>
+
+      <main>
+        <h1><%= title %></h1>
+
+        <!-- Injected HTML built by utilities.buildVehicleDetailHTML -->
+        <%- detailHTML %>
+      </main>
+
+      <%- include('../partials/footer'); %>
+    </div>
+  </body>
+</html>

@@ -1,4 +1,4 @@
-
+/* 
 
 * {
   box-sizing: border-box;
@@ -165,4 +165,142 @@ footer {
     flex-direction: column;
   }
 }
+ */
 
+
+
+
+
+
+
+
+
+
+
+ * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
+  background-image: url('/images/site/checkerboard.jpg'); 
+  background-repeat: repeat;
+  color: #222;
+  line-height: 1.4;
+}
+
+#wrapper {
+  max-width: 1100px;
+  margin: 20px auto;
+  background-color: #ffffff;   
+  border: 5px solid #00aaff;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #00aaff;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+header h1 { font-size: 1.6rem; }
+.account { font-size: 0.9rem; color: #333; }
+
+nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  background-color: #222;
+  margin: 0 0 1rem 0;
+  padding: 0.5rem 0;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+  display: block;
+}
+
+nav a:hover { background-color: #00aaff; color: #000; }
+
+main { padding: 0.5rem 0; }
+h1, h2 { margin: 0.6rem 0; }
+
+/* HERO from week1 */
+#hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.hero-img { width: 100%; max-width: 400px; }
+
+/* UPGRADES */
+#upgrades .grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+/* DETAIL view */
+.vehicle-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1rem;
+}
+
+.vehicle-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.vehicle-info h2 { margin-bottom: 0.5rem; }
+.price {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #047b04;
+  margin-bottom: 0.6rem;
+}
+
+.vehicle-meta {
+  list-style: none;
+  margin: 0.6rem 0;
+  padding: 0;
+}
+
+.vehicle-description { margin-top: 1rem; }
+
+/* Responsive rules */
+@media screen and (min-width: 768px) {
+  #hero { flex-direction: row; justify-content: space-between; }
+  #upgrades .grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media screen and (max-width: 767px) {
+  .vehicle-detail {
+    grid-template-columns: 1fr;
+  }
+  nav ul { flex-direction: column; }
+  #wrapper { margin: 8px; padding: 0.8rem; }
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #e1e1e1;
+}
+footer a { color: #0077cc; text-decoration: underline; }
