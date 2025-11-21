@@ -1,3 +1,7 @@
+
+
+
+
 import inventoryModel from "../models/inventory-model.js";
 import utilities from "../utilities/index.js";
 
@@ -5,28 +9,37 @@ const invController = {};
 
 
 invController.buildByClassification = async (req, res, next) => {
-  const classification = req.params.classificationName || "All";
-  
-  res.render("inventory/classification", {
-    title: `${classification} Vehicles`,
-    classification,
-    nav: await utilities.getNav()
-  });
+  const classificationName = req.params.classificationName;
+
+  try {
+    const vehicles = await inventoryModel.getVehiclesByClassification(classificationName);
+
+    if (!vehicles || vehicles.length === 0) {
+      const err = new Error("No vehicles found for this classification");
+      err.status = 404;
+      return next(err);
+    }
+
+    const listHTML = utilities.buildClassificationGrid(vehicles);
+
+    res.render("inventory/classification", {
+      title: `${classificationName} Vehicles`,
+      nav: await utilities.getNav(),
+      classificationName,
+      listHTML
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-
+// Detail page
 invController.buildDetailView = async (req, res, next) => {
-  const inv_id = parseInt(req.params.inv_id, 10);
-
-  if (Number.isNaN(inv_id)) {
-    // invalid id -> 404
-    const err = new Error("Invalid vehicle id");
-    err.status = 404;
-    return next(err);
-  }
+  const inv_id = parseInt(req.params.inv_id);
 
   try {
     const vehicle = await inventoryModel.getVehicleByInvId(inv_id);
+
     if (!vehicle) {
       const err = new Error("Vehicle not found");
       err.status = 404;
@@ -40,15 +53,10 @@ invController.buildDetailView = async (req, res, next) => {
       nav: await utilities.getNav(),
       detailHTML
     });
+
   } catch (error) {
-    return next(error);
+    next(error);
   }
-};
-
-
-invController.triggerError = (req, res, next) => {
-  // throw synchronous error to be caught by error middleware
-  throw new Error("Intentional 500 error triggered for testing");
 };
 
 export default invController;

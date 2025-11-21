@@ -1,14 +1,15 @@
+
+
 const utilities = {};
 
-
 utilities.getNav = async function () {
-  // returning minimal nav to inject in views if desired
   return `
     <nav>
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/inventory/classification/Custom">Custom</a></li>
         <li><a href="/inventory/classification/Sedan">Sedan</a></li>
+        <li><a href="/inventory/classification/Sport">Sport</a></li>
         <li><a href="/inventory/classification/SUV">SUV</a></li>
         <li><a href="/inventory/classification/Truck">Truck</a></li>
       </ul>
@@ -16,44 +17,50 @@ utilities.getNav = async function () {
 };
 
 
-utilities.buildVehicleDetailHTML = function (vehicle) {
-  const price = Number(vehicle.inv_price).toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
+
+
+utilities.buildClassificationGrid = (vehicles) => {
+  let html = `<div class="vehicle-grid">`;
+
+  vehicles.forEach(vehicle => {
+    html += `
+      <div class="vehicle-item">
+        <a href="/inventory/detail/${vehicle.inv_id}">
+          <img src="${vehicle.inv_image}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model}">
+          <h3>${vehicle.inv_make} ${vehicle.inv_model}</h3>
+        </a>
+        <p>$${new Intl.NumberFormat().format(vehicle.inv_price)}</p>
+      </div>
+    `;
   });
 
-  const miles = Number(vehicle.inv_miles).toLocaleString("en-US");
+  html += `</div>`;
+  return html;
+};
 
-  // Use full-size image URL in inv_image
+
+utilities.buildVehicleDetailHTML = (vehicle) => {
   return `
-    <section id="vehicle-detail" class="vehicle-detail">
-      <div class="vehicle-image">
-        <img src="${vehicle.inv_image}" alt="${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}">
-      </div>
+    <div class="detail-container">
+      <img src="${vehicle.inv_image}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
 
-      <div class="vehicle-info">
+      <div class="detail-info">
         <h2>${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}</h2>
-        <p class="price">${price}</p>
 
-        <ul class="vehicle-meta">
-          <li><strong>Mileage:</strong> ${miles} miles</li>
-          <li><strong>Color:</strong> ${vehicle.inv_color || "Unknown"}</li>
-        </ul>
+        <p class="price-tag">Price: $${new Intl.NumberFormat().format(vehicle.inv_price)}</p>
 
-        <div class="vehicle-description">
-          <h3>Description</h3>
-          <p>${vehicle.inv_description || "No description provided."}</p>
-        </div>
+        <p><strong>Miles:</strong> ${new Intl.NumberFormat().format(vehicle.inv_miles)}</p>
+        <p><strong>Color:</strong> ${vehicle.inv_color}</p>
+
+        <p><strong>Description:</strong></p>
+        <p>${vehicle.inv_description}</p>
       </div>
-    </section>
+    </div>
   `;
 };
 
-/**
- * Error handling wrapper for async route handlers
- */
-utilities.handleErrors = (fn) => (req, res, next) => {
+
+utilities.handleErrors = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
-};
 
 export default utilities;

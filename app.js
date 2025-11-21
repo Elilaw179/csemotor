@@ -13,15 +13,16 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// view engine
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// parse urlencoded bodies (if you later need forms)
 app.use(express.urlencoded({ extended: true }));
+import inventoryRoutes from "./routes/inventoryRoute.js";
+app.use("/inv", inventoryRoutes);
+
 
 // routes
 app.use("/", baseRoute);
@@ -37,7 +38,7 @@ app.use((req, res) => {
   });
 });
 
-// 500 error handler (must be last)
+
 app.use((err, req, res, next) => {
   console.error("ERROR:", err);
   res.status(500).render("errors/error", {
