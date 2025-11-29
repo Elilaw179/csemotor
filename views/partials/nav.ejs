@@ -1,4 +1,4 @@
-
+<!-- 
 
 <nav>
   <ul>
@@ -9,5 +9,23 @@
     <li><a href="/inventory/classification/SUV">SUV</a></li>
     <li><a href="/inventory/classification/Truck">Truck</a></li>
   </ul>
-</nav>
+</nav> -->
 
+
+
+
+
+
+
+
+<nav>
+  <ul>
+    <% classifications.forEach(c => { %>
+      <li>
+        <a href="/inv/type/<%= c.classification_id %>">
+          <%= c.classification_name %>
+        </a>
+      </li>
+    <% }) %>
+  </ul>
+</nav>

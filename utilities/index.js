@@ -1,66 +1,87 @@
 
 
-const utilities = {};
+import invModel from "../models/inventory-model.js";
 
-utilities.getNav = async function () {
-  return `
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/inventory/classification/Custom">Custom</a></li>
-        <li><a href="/inventory/classification/Sedan">Sedan</a></li>
-        <li><a href="/inventory/classification/Sport">Sport</a></li>
-        <li><a href="/inventory/classification/SUV">SUV</a></li>
-        <li><a href="/inventory/classification/Truck">Truck</a></li>
-      </ul>
-    </nav>`;
-};
+/* NAVIGATION BUILDER */
+async function getNav() {
+  let data = await invModel.getClassifications();
+  let list = '<ul>';
+  list += '<li><a href="/" title="Home page">Home</a></li>';
+  data.rows.forEach((row) => {
+    list += `<li><a href="/inventory/classification/${row.classification_name}" 
+        title="See our inventory of ${row.classification_name} vehicles">
+        ${row.classification_name}</a></li>`;
+  });
+  list += '</ul>';
+  return list;
+}
 
-
-
-
-utilities.buildClassificationGrid = (vehicles) => {
-  let html = `<div class="vehicle-grid">`;
-
-  vehicles.forEach(vehicle => {
-    html += `
+/* CLASSIFICATION GRID */
+function buildClassificationGrid(data) {
+  let grid = '<div class="vehicle-grid">';
+  data.forEach((vehicle) => {
+    grid += `
       <div class="vehicle-item">
         <a href="/inventory/detail/${vehicle.inv_id}">
-          <img src="${vehicle.inv_image}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model}">
-          <h3>${vehicle.inv_make} ${vehicle.inv_model}</h3>
+          <img src="${vehicle.inv_image}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
         </a>
-        <p>$${new Intl.NumberFormat().format(vehicle.inv_price)}</p>
+        <h3>
+          <a href="/inventory/detail/${vehicle.inv_id}">
+            ${vehicle.inv_make} ${vehicle.inv_model}
+          </a>
+        </h3>
+        <span>$${new Intl.NumberFormat().format(vehicle.inv_price)}</span>
       </div>
     `;
   });
+  grid += '</div>';
+  return grid;
+}
 
-  html += `</div>`;
-  return html;
-};
-
-
-utilities.buildVehicleDetailHTML = (vehicle) => {
+/* VEHICLE DETAIL PAGE BUILDER */
+function buildVehicleDetailHTML(vehicle) {
   return `
     <div class="detail-container">
       <img src="${vehicle.inv_image}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
-
       <div class="detail-info">
-        <h2>${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}</h2>
-
-        <p class="price-tag">Price: $${new Intl.NumberFormat().format(vehicle.inv_price)}</p>
-
-        <p><strong>Miles:</strong> ${new Intl.NumberFormat().format(vehicle.inv_miles)}</p>
-        <p><strong>Color:</strong> ${vehicle.inv_color}</p>
-
-        <p><strong>Description:</strong></p>
+        <h2>${vehicle.inv_make} ${vehicle.inv_model}</h2>
+        <p class="price-tag">$${new Intl.NumberFormat().format(vehicle.inv_price)}</p>
+        <p>Mileage: ${vehicle.inv_miles.toLocaleString()} miles</p>
+        <p>Color: ${vehicle.inv_color}</p>
         <p>${vehicle.inv_description}</p>
       </div>
     </div>
   `;
+}
+
+/* CLASSIFICATION SELECT LIST (for add-inventory form) */
+async function buildClassificationList(classification_id = null) {
+  let data = await invModel.getClassifications();
+  let select = `<select name="classification_id" id="classificationList" required>`;
+  select += `<option value="">Choose a Classification</option>`;
+
+  data.rows.forEach((row) => {
+    select += `<option value="${row.classification_id}" 
+      ${classification_id == row.classification_id ? "selected" : ""}>
+      ${row.classification_name}
+    </option>`;
+  });
+
+  select += "</select>";
+  return select;
+}
+
+/* ERROR HANDLER WRAPPER */
+function handleErrors(fn) {
+  return (req, res, next) => fn(req, res, next).catch(next);
+}
+
+export default {
+  getNav,
+  buildClassificationGrid,
+  buildVehicleDetailHTML,
+  buildClassificationList,
+  handleErrors
 };
 
 
-utilities.handleErrors = (fn) => (req, res, next) =>
-  Promise.resolve(fn(req, res, next)).catch(next);
-
-export default utilities;

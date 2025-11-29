@@ -1,54 +1,86 @@
 
 
-import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
+ // app.js
+import express from "express"
+import path from "path"
+import { fileURLToPath } from "url"
+import session from "express-session"
+import flash from "connect-flash"
 
-import baseRoute from "./routes/baseRoute.js";
-import inventoryRoute from "./routes/inventoryRoute.js";
-import errorRoute from "./routes/errorRoute.js";
+// Routers
+import classificationModel from "./models/classification-model.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import inventoryRouter from "./routes/inventoryRoute.js"
 
-const app = express();
+const app = express()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// View engine
+app.set("view engine", "ejs")
+app.set("views", path.join(__dirname, "views"))
+
+// Static
+app.use(express.static(path.join(__dirname, "public")))
+
+// Body parsing
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+
+// Sessions
+app.use(
+  session({
+    secret: "super-secret-key",
+    resave: false,
+    saveUninitialized: false,
+  })
+)
+app.use(flash())
+
+// Flash global availability
+app.use((req, res, next) => {
+    res.locals.message = req.flash("message")
+    res.locals.errors = req.flash("errors")
+    next()
+})
 
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use(express.urlencoded({ extended: true }));
-import inventoryRoutes from "./routes/inventoryRoute.js";
-app.use("/inv", inventoryRoutes);
 
 
-// routes
-app.use("/", baseRoute);
-app.use("/inventory", inventoryRoute);
-app.use("/", errorRoute); // route for /cause-error
 
-// 404 handler
+// Routes
+app.use(async (req, res, next) => {
+  const classifications = await classificationModel.getClassifications();
+  res.locals.classifications = classifications;
+  next();
+});
+
+
+
+
+
+app.use("/inv", inventoryRouter)
+
+app.get("/", (req, res) => {
+  res.render("index", { title: "Home" })
+})
+
+// 404
 app.use((req, res) => {
-  res.status(404).render("errors/error", {
-    title: "404 - Not Found",
-    message: "Sorry — the page you requested cannot be found.",
-    nav: ""
-  });
-});
+  res.status(404).render("error", {
+    title: "404 Not Found",
+    message: "The page you requested does not exist.",
+  })
+})
 
-
+// 500
 app.use((err, req, res, next) => {
-  console.error("ERROR:", err);
-  res.status(500).render("errors/error", {
-    title: "500 - Server Error",
-    message: "An unexpected error occurred. Please try again later.",
-    nav: ""
-  });
-});
+  console.error(err)
+  res.status(500).render("error", {
+    title: "500 Error",
+    message: "A server error occurred.",
+  })
+})
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`CSE Motors running on port ${PORT}`));
-
-
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => console.log(`CSE Motors running on ${PORT}`))

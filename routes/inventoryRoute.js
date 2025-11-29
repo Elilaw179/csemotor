@@ -1,27 +1,37 @@
 
 
+// routes/inventoryRoute.js
+import express from "express"
+import invController from "../controllers/invController.js"
+import { 
+  classificationRules, checkClassificationResult,
+  vehicleRules, checkVehicleResult 
+} from "../middleware/validators.js"
 
-import express from "express";
-import invController from "../controllers/invController.js";
-import utilities from "../utilities/index.js";
+const router = express.Router()
 
-const router = express.Router();
+// VEHICLES BY CLASSIFICATION
+router.get("/type/:classificationId", invController.buildByClassificationId)
 
+// MANAGEMENT VIEW
+router.get("/", invController.buildManagement)
 
-router.get(
-  "/classification/:classificationName",
-  utilities.handleErrors(invController.buildByClassification)
-);
+// ADD CLASSIFICATION
+router.get("/add-classification", invController.buildAddClassification)
+router.post(
+  "/add-classification",
+  classificationRules(),
+  checkClassificationResult,
+  invController.addClassification
+)
 
-router.get(
-  "/detail/:inv_id",
-  utilities.handleErrors(invController.buildDetailView)
-);
+// ADD VEHICLE
+router.get("/add-vehicle", invController.buildAddVehicle)
+router.post(
+  "/add-vehicle",
+  vehicleRules(),
+  checkVehicleResult,
+  invController.addVehicle
+)
 
-// Trigger error
-router.get(
-  "/error",
-  utilities.handleErrors(invController.triggerError)
-);
-
-export default router;
+export default router

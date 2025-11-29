@@ -1,15 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Inventory</title>
+  <title><%= title %></title>
   <%- include('../partials/head'); %>
 </head>
 <body>
-  <%- include('../partials/header'); %>
-  <main>
-    <h1>Vehicle Inventory</h1>
-    <p>Select a classification from the navigation above.</p>
-  </main>
-  <%- include('../partials/footer'); %>
+  <div id="wrapper">
+    <%- include('../partials/header'); %>
+
+    <main>
+      <h1><%= title %></h1>
+
+      <% if (vehicles && vehicles.length > 0) { %>
+        
+        <div class="vehicle-grid">
+          <% vehicles.forEach(v => { %>
+            <div class="vehicle-item">
+              <img src="<%= v.inv_thumbnail %>" alt="<%= v.inv_make %> <%= v.inv_model %>">
+
+              <h2><%= v.inv_make %> <%= v.inv_model %></h2>
+
+              <p><strong>Price:</strong> $<%= v.inv_price %></p>
+              <p><strong>Year:</strong> <%= v.inv_year %></p>
+              <p><strong>Miles:</strong> <%= v.inv_miles %></p>
+            </div>
+          <% }) %>
+        </div>
+
+      <% } else { %>
+        <p>No vehicles found for this classification.</p>
+      <% } %>
+    </main>
+
+    <%- include('../partials/footer'); %>
+  </div>
 </body>
 </html>
